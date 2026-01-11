@@ -4,7 +4,7 @@ rdr3_warning 'I acknowledge that this is a prerelease build of RedM, and I am aw
 
 author 'KamiliaBlow'
 description 'Oblivion Style Lockpicking Minigame'
-version '0.8'
+version '0.8.5'
 
 ui_page 'html/index.html'
 

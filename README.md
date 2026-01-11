@@ -20,7 +20,8 @@ Use `kb_lockpicking` export to start lockpicking.
 ```
 -- Example
 RegisterCommand('lockpicktry', function()
-    local result = exports['kb_lockpicking']:startLockpick(3)
+	--3 is hard see config
+    local result = exports['kb_lockpicking']:startLockpick(3, false)
 
     print(result, 'lockpicking result')
 
@@ -33,5 +34,5 @@ end)
 ```
 
 ## Known issues and bugs
-- The bolt does not open (animation) when the lock is open (maybe I will implement this in the future)
+- The lock bolt does not open (animation) when the lock is open (maybe I will implement this in the future)
 - The lockpick does not break quite correctly (visual).

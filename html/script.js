@@ -99,8 +99,23 @@ window.addEventListener('message', function(event) {
             springEl.id = `spring-${index}`;
             springEl.className = 'spring';
             springEl.style.left = pinPositions[index] + 'px';
+
+            if (pin.type === 2) {
+                springEl.style.height = '53px';
+
+                springEl.style.transition = 'none';
+            } else {
+                springEl.style.height = '100px';
+                springEl.style.transition = 'height 0.2s ease-out';
+            }
+
             lockBody.appendChild(springEl);
         });
+		
+		setTimeout(() => {
+            const springs = document.querySelectorAll('.spring');
+            springs.forEach(s => s.style.transition = 'height 0.2s ease-out');
+        }, 100);
 
         moveLockpick(0);
         

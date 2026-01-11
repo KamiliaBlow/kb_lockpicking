@@ -54,6 +54,11 @@ local function StartLockpick(difficulty, forceAllActive)
     for i = 1, activeCount do table.insert(lock, 1) end
     while #lock < 5 do table.insert(lock, 2) end
     
+    for i = #lock, 2, -1 do
+        local j = math.random(i)
+        lock[i], lock[j] = lock[j], lock[i]
+    end
+    
     for i = 1, 5 do
         local isActive = forceAllActive or lock[i] == 1
         local generatedPattern = isActive and generatePattern(lockDifficulty) or {}
@@ -87,16 +92,18 @@ local function StartLockpick(difficulty, forceAllActive)
     --print("Lockpick Started. Difficulty:", lockDifficulty)
 end
 
-exports('startLockpick', function(difficulty)
+exports('startLockpick', function(difficulty, forceAllActive)
     if isPicking or LockpickPromise then 
-        print("Already picking!")
+        --print("Already picking!")
         return nil 
     end
     
     --print("Starting Lockpick... Waiting for promise.")
     LockpickPromise = promise.new()
     
-    StartLockpick(difficulty, false)
+    if forceAllActive == nil then forceAllActive = false end
+    
+    StartLockpick(difficulty, forceAllActive)
     
     local result = Citizen.Await(LockpickPromise)
     LockpickPromise = nil
@@ -134,9 +141,7 @@ RegisterNUICallback('handleInput', function(data, cb)
             pin.timer = (GetGameTimer() / 1000.0) + totalTime
             
             local currentTimeMs = GetGameTimer()
-            
             pin.windowStart = currentTimeMs + (DELAY * 1000) + (speedConfig.rise_time * 1000)
-
             pin.windowEnd = pin.windowStart + (speedConfig.win_time * 1000)
             
             pin.canLock = false 
@@ -184,7 +189,6 @@ RegisterNUICallback('handleInput', function(data, cb)
                 pin.state = "down"
                 pin.canLock = false
                 SendNUIMessage({ type = "updatePin", index = lockpickPosition, state = "down", duration = 0.1 })
-                
                 SendNUIMessage({ type = "playSound", sound = "broken" }) 
                 
                 isPicking = false
@@ -242,7 +246,6 @@ CreateThread(function()
                     isPicking = false
                     lastGameSuccess = true
                     visualCloseTimer = GetGameTimer() + 2000 
-                    
                     SendNUIMessage({ type = "playSound", sound = "lockpick_succes" })
                     FinishGame(true)
                 end
@@ -268,15 +271,22 @@ end)
 
 if Config.TestCommand then
     RegisterCommand('testlock', function(source, args)
-        if args[1] ~= nil and args[2] ~= nil then 
-            if args[1] == "easy" then
-                StartLockpick(DIFFICULTIES.EASY, args[2]) 
-            elseif args[1] == "normal" then
-                StartLockpick(DIFFICULTIES.NORMAL, args[2]) 
-            elseif args[1] == "hard" then
-                StartLockpick(DIFFICULTIES.HARD, args[2])
-            elseif args[1] == "master" then
-                StartLockpick(DIFFICULTIES.MASTER, args[2])
+        local diff = DIFFICULTIES.NORMAL
+        if args[1] then
+            if args[1] == "easy" then 
+                diff = DIFFICULTIES.EASY
+            elseif args[1] == "hard" then 
+                diff = DIFFICULTIES.HARD
+            elseif args[1] == "master" then 
+                diff = DIFFICULTIES.MASTER
+            end
         end
+
+        local forceAll = false
+        if args[2] and args[2] == "true" then
+            forceAll = true
+        end
+
+        StartLockpick(diff, forceAll)
     end)
 end
