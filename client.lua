@@ -277,6 +277,7 @@ if Config.TestCommand then
                 StartLockpick(DIFFICULTIES.HARD, args[2])
             elseif args[1] == "master" then
                 StartLockpick(DIFFICULTIES.MASTER, args[2])
+            end
         end
     end)
 end
