@@ -17,7 +17,7 @@ A RedM script that replicates the lockpicking mechanics from TES 4 Oblivion. You
 
 ## Usage
 Use `kb_lockpicking` export to start lockpicking.
-```
+```lua
 -- Example
 RegisterCommand('lockpicktry', function()
 	--3 is hard see config
@@ -32,6 +32,8 @@ RegisterCommand('lockpicktry', function()
     end
 end)
 ```
+
+You can use this https://github.com/KamiliaBlow/ox_doorlock_vorp resource, it is adapted to work with RedM and this resource.
 
 ## Known issues and bugs
 - The lock bolt does not open (animation) when the lock is open (maybe I will implement this in the future)
