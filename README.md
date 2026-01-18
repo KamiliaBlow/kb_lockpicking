@@ -36,5 +36,4 @@ end)
 You can use this https://github.com/KamiliaBlow/ox_doorlock_vorp resource, it is adapted to work with RedM and this resource.
 
 ## Known issues and bugs
-- The lock bolt does not open (animation) when the lock is open (maybe I will implement this in the future)
 - The lockpick does not break quite correctly (visual).
