@@ -78,7 +78,8 @@ window.addEventListener('message', function(event) {
         const lockBody = document.getElementById('lock-body');
         lockBody.innerHTML = ''; 
         const container = document.getElementById('container');
-        const bgLayer = document.getElementById('bg-layer'); 
+        const lockUpper = document.getElementById('lock-upper');
+        const lockLower = document.getElementById('lock-lower');
 
         if(!container) return;
         
@@ -102,7 +103,6 @@ window.addEventListener('message', function(event) {
 
             if (pin.type === 2) {
                 springEl.style.height = '53px';
-
                 springEl.style.transition = 'none';
             } else {
                 springEl.style.height = '100px';
@@ -111,8 +111,8 @@ window.addEventListener('message', function(event) {
 
             lockBody.appendChild(springEl);
         });
-		
-		setTimeout(() => {
+        
+        setTimeout(() => {
             const springs = document.querySelectorAll('.spring');
             springs.forEach(s => s.style.transition = 'height 0.2s ease-out');
         }, 100);
@@ -120,7 +120,12 @@ window.addEventListener('message', function(event) {
         moveLockpick(0);
         
         container.style.display = 'block';
-        bgLayer.style.display = 'block'; 
+
+        if(lockUpper) lockUpper.style.display = 'block';
+        if(lockLower) {
+            lockLower.style.display = 'block';
+            lockLower.classList.remove('open');
+        }
     } 
     else if (data.type === 'movePick') {
         moveLockpick(data.position);
@@ -133,28 +138,42 @@ window.addEventListener('message', function(event) {
     }
     else if (data.type === 'ui_close') {
         const container = document.getElementById('container');
-        const bgLayer = document.getElementById('bg-layer');
+        const lockUpper = document.getElementById('lock-upper');
+        const lockLower = document.getElementById('lock-lower');
         const pick = document.getElementById('lockpick');
         const head = document.getElementById('pick-head');
 
         if(container) container.style.display = 'none';
-        if(bgLayer) bgLayer.style.display = 'none'; 
+        if(lockUpper) lockUpper.style.display = 'none';
+        if(lockLower) {
+            lockLower.style.display = 'none';
+            lockLower.classList.remove('open');
+        }
 
         if(pick) {
+            pick.style.opacity = '1'; 
             pick.style.backgroundImage = "url('textures/Lockpick.png')";
         }
         if(head) head.style.display = 'none';
     }
     else if (data.type === 'closeLockpick') {
         const container = document.getElementById('container');
-        const bgLayer = document.getElementById('bg-layer');
-        
+        const lockUpper = document.getElementById('lock-upper');
+        const lockLower = document.getElementById('lock-lower');
+		
         if(container) container.style.display = 'none';
-        if(bgLayer) bgLayer.style.display = 'none'; 
-        
+        if(lockUpper) lockUpper.style.display = 'none';
+        if(lockLower) {
+            lockLower.style.display = 'none';
+            lockLower.classList.remove('open');
+        }
+
         const pick = document.getElementById('lockpick');
         const head = document.getElementById('pick-head');
-        if(pick) pick.style.backgroundImage = "url('textures/Lockpick.png')";
+        if(pick) {
+            pick.style.opacity = '1';
+            pick.style.backgroundImage = "url('textures/Lockpick.png')";
+        }
         if(head) head.style.display = 'none';
 
         fetch(`https://${resourceName}/close`, {
@@ -162,6 +181,18 @@ window.addEventListener('message', function(event) {
             headers: { 'Content-Type': 'application/json; charset=UTF-8' },
             body: JSON.stringify({})
         });
+    }
+    else if (data.type === 'lockOpen') {
+        const lockLower = document.getElementById('lock-lower');
+        if(lockLower) {
+            lockLower.classList.add('open');
+        }
+
+        const lockpick = document.getElementById('lockpick');
+        if(lockpick) {
+            lockpick.style.transition = 'opacity 0.5s ease-out';
+            lockpick.style.opacity = '0';
+        }
     }
 });
 

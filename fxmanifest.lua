@@ -4,7 +4,7 @@ rdr3_warning 'I acknowledge that this is a prerelease build of RedM, and I am aw
 
 author 'KamiliaBlow'
 description 'Oblivion Style Lockpicking Minigame'
-version '0.8.5'
+version '0.9'
 
 ui_page 'html/index.html'
 
@@ -20,15 +20,16 @@ files {
     'html/textures/Pin.png',
     'html/textures/LockedPin.png',
     'html/textures/Lockpick.png',
-	'html/textures/Lockpick_broken.png',
-	'html/textures/Lockpick_head.png',
-    'html/textures/slice1.png',
-	'html/textures/spring.png',
+    'html/textures/Lockpick_broken.png',
+    'html/textures/Lockpick_head.png',
+    'html/textures/slice2.png',
+    'html/textures/slice23.png',
+    'html/textures/spring.png',
     'html/sounds/pinup.mp3',
     'html/sounds/sping.mp3',
     'html/sounds/podsechka.mp3',
     'html/sounds/pin_succes.mp3',
     'html/sounds/pin_fail.mp3',
     'html/sounds/lockpick_broken.mp3',
-	'html/sounds/lockpick_succes.mp3'
+    'html/sounds/lockpick_succes.mp3'
 }

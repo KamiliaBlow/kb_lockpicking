@@ -10,11 +10,11 @@ Config.Difficulties = {
 
 --	 id speed   pin name          visual speed ms   time to pin.lock ms   
 Config.Speeds = {
-    { id = 1, name = "very_slow", rise_time = 0.12, win_time = 0.5  }, 
-    { id = 2, name = "slow",      rise_time = 0.09, win_time = 0.4  }, 
+    { id = 1, name = "very_slow", rise_time = 0.12, win_time = 0.45  }, 
+    { id = 2, name = "slow",      rise_time = 0.09, win_time = 0.30  }, 
     { id = 3, name = "medium",    rise_time = 0.07, win_time = 0.25 }, 
-    { id = 4, name = "fast",      rise_time = 0.05, win_time = 0.15 }, 
-    { id = 5, name = "very_fast", rise_time = 0.03, win_time = 0.10 }
+    { id = 4, name = "fast",      rise_time = 0.05, win_time = 0.20 }, 
+    { id = 5, name = "very_fast", rise_time = 0.03, win_time = 0.15 }
 }
 
 -- The numbers represent how often the pattern will appear on a given difficulty level.						

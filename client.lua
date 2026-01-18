@@ -32,8 +32,6 @@ local function generatePattern(difficulty)
 end
 
 local function FinishGame(success)
-    --print(string.format("[FinishGame] Called with: %s", tostring(success)))
-    
     if LockpickPromise then
         LockpickPromise:resolve(success)
         LockpickPromise = nil
@@ -48,11 +46,26 @@ local function StartLockpick(difficulty, forceAllActive)
     pins = {}
     local lock = {} 
     
-    local offset = math.random(1, 2)
-    local activeCount = lockDifficulty + offset
+    local inactiveCount = 0
     
+    if lockDifficulty == Config.Difficulties.EASY then
+        inactiveCount = math.random(1, 3)
+    elseif lockDifficulty == Config.Difficulties.NORMAL then
+        inactiveCount = math.random(1, 2)
+    elseif lockDifficulty == Config.Difficulties.HARD then
+        inactiveCount = 1
+    elseif lockDifficulty == Config.Difficulties.MASTER then
+        inactiveCount = 0
+    end
+
+    if forceAllActive then
+        inactiveCount = 0
+    end
+
+    local activeCount = 5 - inactiveCount
+
     for i = 1, activeCount do table.insert(lock, 1) end
-    while #lock < 5 do table.insert(lock, 2) end
+    for i = 1, inactiveCount do table.insert(lock, 2) end
     
     for i = #lock, 2, -1 do
         local j = math.random(i)
@@ -88,17 +101,13 @@ local function StartLockpick(difficulty, forceAllActive)
         pins = pins,
         controls = Config.Controls
     })
-    
-    --print("Lockpick Started. Difficulty:", lockDifficulty)
 end
 
 exports('startLockpick', function(difficulty, forceAllActive)
     if isPicking or LockpickPromise then 
-        --print("Already picking!")
         return nil 
     end
     
-    --print("Starting Lockpick... Waiting for promise.")
     LockpickPromise = promise.new()
     
     if forceAllActive == nil then forceAllActive = false end
@@ -146,8 +155,6 @@ RegisterNUICallback('handleInput', function(data, cb)
             
             pin.canLock = false 
             
-            --print(string.format("[PRESS] Pin %d: %s (Rise: %.2fs, Win: %.2fs)", pinIndexLua, speedConfig.name, speedConfig.rise_time, speedConfig.win_time))
-            
             SendNUIMessage({ 
                 type = "updatePin", 
                 index = lockpickPosition, 
@@ -171,21 +178,13 @@ RegisterNUICallback('handleInput', function(data, cb)
                 end
             end
 
-            -- print(string.format("[E-CLICK] Pin %d | Time: %.2f | Window: %.2f - %.2f", 
-                -- pinIndexLua, 
-                -- currentTimeMs/1000.0, 
-                -- (pin.windowStart or 0)/1000.0, 
-                -- (pin.windowEnd or 0)/1000.0))
-
             if isInsideWindow then
                 pin.isLocked = true
                 pin.canLock = false
                 pin.state = "locked"
                 SendNUIMessage({ type = "playSound", sound = "success" })
                 SendNUIMessage({ type = "updatePin", index = lockpickPosition, state = "locked" })
-                --print("Pin Locked!")
             else
-                --print("[FAILURE] Breaking pick. Missed the sweet spot.")
                 pin.state = "down"
                 pin.canLock = false
                 SendNUIMessage({ type = "updatePin", index = lockpickPosition, state = "down", duration = 0.1 })
@@ -245,17 +244,18 @@ CreateThread(function()
                 if allUnlockedLocked then
                     isPicking = false
                     lastGameSuccess = true
-                    visualCloseTimer = GetGameTimer() + 2000 
+                    visualCloseTimer = GetGameTimer() + 2500 
                     SendNUIMessage({ type = "playSound", sound = "lockpick_succes" })
+                    
+                    SendNUIMessage({ type = "lockOpen" })
+                    
                     FinishGame(true)
                 end
             end
         end
         
         if visualCloseTimer > 0 and GetGameTimer() > visualCloseTimer then
-            --print("[UI] Closing UI...")
             visualCloseTimer = 0
-            
             SetNuiFocus(false, false)
             SendNUIMessage({ type = "ui_close", success = lastGameSuccess })
         end
@@ -272,12 +272,19 @@ end)
 if Config.TestCommand then
     RegisterCommand('testlock', function(source, args)
         local diff = DIFFICULTIES.NORMAL
+        
         if args[1] then
-            if args[1] == "easy" then 
+            local numArg = tonumber(args[1])
+            
+            if numArg then
+                diff = numArg
+            elseif args[1] == "easy" or args[1] == "1" then 
                 diff = DIFFICULTIES.EASY
-            elseif args[1] == "hard" then 
+            elseif args[1] == "normal" or args[1] == "2" then 
+                diff = DIFFICULTIES.NORMAL
+            elseif args[1] == "hard" or args[1] == "3" then 
                 diff = DIFFICULTIES.HARD
-            elseif args[1] == "master" then 
+            elseif args[1] == "master" or args[1] == "4" then 
                 diff = DIFFICULTIES.MASTER
             end
         end
@@ -287,6 +294,7 @@ if Config.TestCommand then
             forceAll = true
         end
 
+        print(string.format("[Command] Starting TestLock with Diff: %s", diff))
         StartLockpick(diff, forceAll)
     end)
 end
