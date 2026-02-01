@@ -1,5 +1,24 @@
 const resourceName = GetParentResourceName();
 
+function resizeUI() {
+    const wrapper = document.getElementById('game-wrapper');
+    if (!wrapper) return;
+    
+    const baseHeight = 1080; 
+    const windowHeight = window.innerHeight;
+    
+	let scale = windowHeight / baseHeight;
+	
+    const sizeMultiplier = 1.3; 
+    
+    scale = scale * sizeMultiplier;
+    
+    wrapper.style.transform = `translate(-50%, -50%) scale(${scale})`;
+}
+
+window.addEventListener('resize', resizeUI);
+window.addEventListener('load', resizeUI);
+
 const sounds = {
     pinup: new Audio('sounds/pinup.mp3'),
     sping: new Audio('sounds/sping.mp3'),
@@ -77,11 +96,11 @@ window.addEventListener('message', function(event) {
     if (data.type === 'openLockpick') {
         const lockBody = document.getElementById('lock-body');
         lockBody.innerHTML = ''; 
-        const container = document.getElementById('container');
+        const wrapper = document.getElementById('game-wrapper');
         const lockUpper = document.getElementById('lock-upper');
         const lockLower = document.getElementById('lock-lower');
 
-        if(!container) return;
+        if(!wrapper) return;
         
         if(data.controls) userControls = data.controls;
         
@@ -119,11 +138,11 @@ window.addEventListener('message', function(event) {
 
         moveLockpick(0);
         
-        container.style.display = 'block';
+        wrapper.style.display = 'block';
 
-        if(lockUpper) lockUpper.style.display = 'block';
+        resizeUI(); 
+
         if(lockLower) {
-            lockLower.style.display = 'block';
             lockLower.classList.remove('open');
         }
     } 
@@ -137,18 +156,11 @@ window.addEventListener('message', function(event) {
         playSound(data.sound);
     }
     else if (data.type === 'ui_close') {
-        const container = document.getElementById('container');
-        const lockUpper = document.getElementById('lock-upper');
-        const lockLower = document.getElementById('lock-lower');
+        const wrapper = document.getElementById('game-wrapper');
         const pick = document.getElementById('lockpick');
         const head = document.getElementById('pick-head');
 
-        if(container) container.style.display = 'none';
-        if(lockUpper) lockUpper.style.display = 'none';
-        if(lockLower) {
-            lockLower.style.display = 'none';
-            lockLower.classList.remove('open');
-        }
+        if(wrapper) wrapper.style.display = 'none';
 
         if(pick) {
             pick.style.opacity = '1'; 
@@ -157,16 +169,9 @@ window.addEventListener('message', function(event) {
         if(head) head.style.display = 'none';
     }
     else if (data.type === 'closeLockpick') {
-        const container = document.getElementById('container');
-        const lockUpper = document.getElementById('lock-upper');
-        const lockLower = document.getElementById('lock-lower');
-		
-        if(container) container.style.display = 'none';
-        if(lockUpper) lockUpper.style.display = 'none';
-        if(lockLower) {
-            lockLower.style.display = 'none';
-            lockLower.classList.remove('open');
-        }
+        const wrapper = document.getElementById('game-wrapper');
+        
+        if(wrapper) wrapper.style.display = 'none';
 
         const pick = document.getElementById('lockpick');
         const head = document.getElementById('pick-head');
@@ -197,8 +202,9 @@ window.addEventListener('message', function(event) {
 });
 
 document.addEventListener('keydown', function(event) {
-    const container = document.getElementById('container');
-    if (!container || container.style.display !== 'block') return;
+    const wrapper = document.getElementById('game-wrapper');
+
+    if (!wrapper || wrapper.style.display !== 'block') return;
 
     let action = null;
     

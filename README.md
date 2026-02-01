@@ -18,10 +18,23 @@ A RedM script that replicates the lockpicking mechanics from TES 4 Oblivion. You
 ## Usage
 Use `kb_lockpicking` export to start lockpicking.
 ```lua
--- Example
+-- Example Manual Mode 
 RegisterCommand('lockpicktry', function()
 	--3 is hard see config
-    local result = exports['kb_lockpicking']:startLockpick(3, false)
+    local result = exports['kb_lockpicking']:startLockpickManual(3, false)
+
+    print(result, 'lockpicking result')
+
+    if result then
+        print("lockpicking succes!")
+    else
+        print("lockpicking fail!")
+    end
+end)
+
+-- Example Static Mode (Normal difficulty)
+RegisterCommand('lockpicktry', function()
+    local result = exports['kb_lockpicking']:startLockpick()
 
     print(result, 'lockpicking result')
 

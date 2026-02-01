@@ -5,7 +5,10 @@ Config.Difficulties = {
     EASY = 1,
     NORMAL = 2,
     HARD = 3,
-    MASTER = 4
+    MASTER = 4,
+	
+    -- Provides basic functionality with standard complexity for server owners who have encrypted scripts installed.
+    HARDCODED = 6
 }
 
 --	 id speed   pin name          visual speed ms   time to pin.lock ms   
@@ -23,6 +26,9 @@ Config.SpeedChances = {
     [Config.Difficulties.NORMAL]  = { 20, 40, 30, 10, 0  },   
     [Config.Difficulties.HARD]    = { 0,  5,  15, 40, 40 },  
     [Config.Difficulties.MASTER]  = { 0,  2,  8,  40, 50 },  
+	
+    -- Provides basic functionality with standard complexity for server owners who have encrypted scripts installed.
+    [Config.Difficulties.HARDCODED]  = { 20, 40, 30, 10, 0  },  
 }
 
 -- Debug command

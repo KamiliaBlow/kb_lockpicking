@@ -103,7 +103,7 @@ local function StartLockpick(difficulty, forceAllActive)
     })
 end
 
-exports('startLockpick', function(difficulty, forceAllActive)
+exports('startLockpickManual', function(difficulty, forceAllActive)
     if isPicking or LockpickPromise then 
         return nil 
     end
@@ -113,6 +113,20 @@ exports('startLockpick', function(difficulty, forceAllActive)
     if forceAllActive == nil then forceAllActive = false end
     
     StartLockpick(difficulty, forceAllActive)
+    
+    local result = Citizen.Await(LockpickPromise)
+    LockpickPromise = nil
+    return result
+end)
+
+exports('startLockpick', function(tries)
+    if isPicking or LockpickPromise then 
+        return nil 
+    end
+    
+    LockpickPromise = promise.new()
+    
+    StartLockpick(6, false)
     
     local result = Citizen.Await(LockpickPromise)
     LockpickPromise = nil
