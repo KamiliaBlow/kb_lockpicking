@@ -56,6 +56,8 @@ local function StartLockpick(difficulty, forceAllActive)
         inactiveCount = math.random(0, 1)
     elseif lockDifficulty == Config.Difficulties.MASTER then
         inactiveCount = 0
+    elseif lockDifficulty == Config.Difficulties.HARDCODED then
+        inactiveCount = math.random(0, 2)
     end
 
     if forceAllActive then
